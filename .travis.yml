@@ -10,7 +10,7 @@ before_install:
 
 script:
   - docker run -e CI=true snowdej/react-test npm test  
-
+ 
 after_success:
   - docker build -t snowdej/multi-client:latest -t snowdej/multi-client:$SHA ./client
   - docker build -t snowdej/multi-nginx:latest  -t snowdej/multi-nginx:$SHA  ./nginx
@@ -28,15 +28,4 @@ after_success:
   - docker push snowdej/multi-server:$SHA
   - docker push snowdej/multi-worker:$SHA
 
-# deploy:
-#   provider: elasticbeanstalk
-#   region: us-west-1
-#   app: multi-docker
-#   env: MultiDocker-env
-#   bucket_name: elasticbeanstalk-us-west-1-306476627547
-#   bucket_path: docker-multi
-#   on:
-#     branch: master
-#   access_key_id: $AWS_ACCESS_KEY
-#   secret_access_key:
-#     secure: $AWS_SECRET_KEY
+ 
