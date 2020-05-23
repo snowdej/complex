@@ -1,6 +1,9 @@
 sudo: required
 services:
   - docker
+env:
+  global:
+    - SHA=$(git rev-parse HEAD)
 
 before_install:
   - docker build -t snowdej/react-test -f ./client/Dockerfile.dev ./client
@@ -9,17 +12,21 @@ script:
   - docker run -e CI=true snowdej/react-test npm test  
 
 after_success:
-  - docker build -t snowdej/multi-client ./client
-  - docker build -t snowdej/multi-nginx ./nginx
-  - docker build -t snowdej/multi-server ./server
-  - docker build -t snowdej/multi-worker ./worker
+  - docker build -t snowdej/multi-client:latest -t snowdej/multi-client:$SHA ./client
+  - docker build -t snowdej/multi-nginx:latest  -t snowdej/multi-nginx:$SHA  ./nginx
+  - docker build -t snowdej/multi-server:latest -t snowdej/multi-server:$SHA ./server
+  - docker build -t snowdej/multi-worker:latest -t snowdej/multi-worker:$SHA ./worker
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub
-  - docker push snowdej/multi-client
-  - docker push snowdej/multi-nginx
-  - docker push snowdej/multi-server
-  - docker push snowdej/multi-worker
+  - docker push snowdej/multi-client:latest
+  - docker push snowdej/multi-nginx:latest
+  - docker push snowdej/multi-server:latest
+  - docker push snowdej/multi-worker:latest
+   - docker push snowdej/multi-client:$SHA
+  - docker push snowdej/multi-nginx:$SHA
+  - docker push snowdej/multi-server:$SHA
+  - docker push snowdej/multi-worker:$SHA
 
 # deploy:
 #   provider: elasticbeanstalk
